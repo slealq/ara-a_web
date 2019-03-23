@@ -20,5 +20,6 @@ setup(
     author_email='stuart.leal23@gmail.com',
     url='https://github.com/slealq/tcu677_webcrawler',
     license=license,
-    packages=find_packages(exclude=('tests'))
+    packages=find_packages(exclude=('tests')),
+    install_requires=[]
 )
