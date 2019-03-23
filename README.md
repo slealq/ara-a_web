@@ -1,4 +1,4 @@
-# oddwebcrawler
+# oddcrawler
 This project is developed as part of a community service for TCU 677 of the
 Universidad de Costa Rica.
 
