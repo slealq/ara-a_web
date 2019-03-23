@@ -1,2 +1,2 @@
-# tcu677_webcrawler
-Proyecto para el proyecto de TCU 677 de la UCR (2019)
+# oddwebcrawler
+Proyecto para TCU 677 de la Universidad de Costa Rica (2019)

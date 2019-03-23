@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    tcu677_webcrawler
+    oddcrawler
 """
 
 __version__ = "0.1.0"
