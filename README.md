@@ -29,7 +29,7 @@ $ git clone https://github.com/slealq/oddcrawler
 $ pip install .
 ```
 
-**OPTIONAL:** Install package with a symlink, so that changes to the source
+Install package with a symlink, so that changes to the source
 files will be inmediately available to the users of the package, as specified in
 [python-packaging](https://python-packaging.readthedocs.io/en/latest/minimal.html).
 
