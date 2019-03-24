@@ -6,4 +6,4 @@
 
 __version__ = "0.1.0"
 
-from .webpage_extractors import monumental
+from .webpage_extractors import monumental_extractor
