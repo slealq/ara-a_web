@@ -14,6 +14,14 @@ $ pyenv install 3.7.2
 $ pyenv global 3.7.2
 ```
 
+You can confirm that now you are in an environment running: 
+
+```sh
+$ which python
+```
+
+This should point to `/home/$USER/.pyenv/shims/python`
+
 Now clone this repo:
 
 ```sh
@@ -21,7 +29,7 @@ $ git clone https://github.com/slealq/oddcrawler
 $ pip install .
 ```
 
-**OPTIONAL:** Install package with a symlink, so that changes to the source
+Install package with a symlink, so that changes to the source
 files will be inmediately available to the users of the package, as specified in
 [python-packaging](https://python-packaging.readthedocs.io/en/latest/minimal.html).
 
