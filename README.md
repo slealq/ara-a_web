@@ -2,6 +2,26 @@
 This project is developed as part of a community service for TCU 677 of the
 Universidad de Costa Rica.
 
+# Dependencies
+This webcrawler will run on **Firefox**. Your system needs to have a running
+installation of firefox to be run. Before you can use
+`oddwebcrawler.webpage_extractors` you will need to get `geckodriver`. This can
+be achieved by downloading it from
+[mozilla's github](https://github.com/mozilla/geckodriver/releases) itself, or
+from your system's sources if it is supported:
+
+For archlinux you can do:
+```ssh
+$ sudo pacman -S geckodriver
+```
+
+There are some other dependencies from pypi repos:
+
+1. selenium
+
+But you **should not** worry about them, since installing the package resolves
+this dependencies.
+
 # Installation
 You might want to set up an environment first. For this it is recommended to
 use [pyenv](https://github.com/pyenv/pyenv). Please follow it's installation
@@ -14,7 +34,7 @@ $ pyenv install 3.7.2
 $ pyenv global 3.7.2
 ```
 
-You can confirm that now you are in an environment running: 
+You can confirm that now you are in an environment running:
 
 ```sh
 $ which python

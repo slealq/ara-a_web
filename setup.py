@@ -21,5 +21,5 @@ setup(
     url='https://github.com/slealq/oddcrawler',
     license=license,
     packages=find_packages('oddcrawler'),
-    install_requires=[]
+    install_requires=['selenium']
 )

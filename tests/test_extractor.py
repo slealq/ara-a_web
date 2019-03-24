@@ -31,6 +31,8 @@ if __name__ == "__main__":
     # Begin first test
     logger.info('Begin Monumental get_news_urls test')
     monumental_extractor = monumental_extractor()
-    test_get_news_urls(monumental_extractor)
+    urls = test_get_news_urls(monumental_extractor)
+    print(urls)
+    assert isinstance(urls, list)
 
     # Test for other extractors might go here
