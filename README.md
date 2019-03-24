@@ -14,6 +14,14 @@ $ pyenv install 3.7.2
 $ pyenv global 3.7.2
 ```
 
+You can confirm that now you are in an environment running: 
+
+```sh
+$ which python
+```
+
+This should point to `/home/$USER/.pyenv/shims/python`
+
 Now clone this repo:
 
 ```sh
