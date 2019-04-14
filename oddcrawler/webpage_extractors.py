@@ -4,7 +4,7 @@
 from abc import ABC, abstractmethod
 from logging import getLogger
 from datetime import timedelta, date
-from json import dumps
+from json import dumps, loads
 from selenium.webdriver import Firefox
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -145,15 +145,59 @@ class monumental_extractor(webpage_extractor):
 
         return self.news_urls
 
-    def filter_news_by_keywords():
-        pass
+    def filter_news_by_keywords(self, keywords: list) -> dict:
+        """Given the complete information from news, return a dictionary
+        that only contains news in which the text contains one of the
+        keywords asked for."""
+
+        self._logger.info(
+            'Appling filters to info using this keywords: {keywords}'.format(
+                **locals()))
+
+        # BEGINS HACK
+        # Don't wait until extract_text is done.
+
+        with open('complete_news_from_13_4_2019', 'r') as f:
+            self._complete_news_info = loads(f.read())
+            f.close()
+
+        # ENDS HACK
+
+        self._filtered_news_info = {'keywords': keywords}
+
+        for key, value in self._complete_news_info.items():
+            match = False
+            for each_keyword in keywords:
+                # Only one match is enough
+                if each_keyword.lower() in value.lower():
+                    match = True
+                    break
+
+            if match:
+                self._logger.info('Hit found with {url}'.format(url=key))
+                self._filtered_news_info[key] = value
+
+        # Just in case we are running with set on force urls
+        # Define day, month and year, with the date defined at build time
+        # in __init__.
+        self.__get_day_month_year_from_datetime(self._datetime_date)
+
+        # Write the filtered result in disk
+        with open('filtered_news_from_{day}_{month}_{year}'.format(
+                day=self._day,
+                month=self._month,
+                year=self._year), 'w') as f:
+            f.write(dumps(self._filtered_news_info))
+            f.close()
+
+        return self._filtered_news_info
 
     def extract_text_from_news(self):
         """Given that the news urls has been resolved, extract the text from
         all news urls. Create a dictionary, which contains the url of the
         news as keys, and the text as values."""
 
-        result = {}
+        self._complete_news_info = {}
 
         for each_new_url in self.news_urls:
             self._logger.info(
@@ -175,22 +219,22 @@ class monumental_extractor(webpage_extractor):
                                 'text-align: justify;' else '' for p in
                                 self._driver.find_elements_by_tag_name('p')]
 
-            result[each_new_url] = ' '.join(valid_paragraphs)
+            self._complete_news_info[each_new_url] = ' '.join(valid_paragraphs)
 
         # Just in case we are running with set on force urls
         # Define day, month and year, with the date defined at build time
         # in __init__.
         self.__get_day_month_year_from_datetime(self._datetime_date)
 
-        # Write result to a file, with current date.
+        # Write self._complete_news_info to a file, with current date.
         with open('complete_news_from_{day}_{month}_{year}'.format(
                 day=self._day,
                 month=self._month,
                 year=self._year), 'w') as f:
-            f.write(dumps(result))
+            f.write(dumps(self._complete_news_info))
             f.close()
 
-        return result
+        return self._complete_news_info
 
     def __del__(self):
         self._driver.quit()
