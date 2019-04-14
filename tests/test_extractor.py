@@ -31,8 +31,7 @@ def test_extract_text_from_news(webpage_extractor):
 
 def test_filter_news_by_keywords(webpage_extractor):
     filtered_news = webpage_extractor.filter_news_by_keywords(
-        ['registro', 'especie', 'Gobierno'])
-
+        ['registro', 'colones', 'Gobierno'])
 
 def complete_test_for_monumental():
     # Begin first test
@@ -51,6 +50,12 @@ def complete_test_for_cr_hoy():
     logger.info('Begin CR Hoy test')
     cr_hoy_extractor = CRHoyExtractor()
     test_get_news_urls(cr_hoy_extractor)
+
+     # Test the text extraction
+    test_extract_text_from_news(cr_hoy_extractor)
+
+    # Test filtering
+    test_filter_news_by_keywords(cr_hoy_extractor)
 
 if __name__ == "__main__":
     # Configure logger: oddcrawler needsd to be the top logger
