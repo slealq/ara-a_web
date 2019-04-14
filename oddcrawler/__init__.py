@@ -6,4 +6,5 @@
 
 __version__ = "0.1.0"
 
-from .webpage_extractors import monumental_extractor
+from .monumental import MonumentalExtractor
+from .cr_hoy import CRHoyExtractor

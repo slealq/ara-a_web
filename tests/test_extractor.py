@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from datetime import date
-from oddcrawler.webpage_extractors import monumental_extractor
+from oddcrawler import MonumentalExtractor, CRHoyExtractor
 from logging import (getLogger, FileHandler, StreamHandler, Formatter, DEBUG,
                      ERROR)
 
@@ -33,6 +33,25 @@ def test_filter_news_by_keywords(webpage_extractor):
     filtered_news = webpage_extractor.filter_news_by_keywords(
         ['registro', 'especie', 'Gobierno'])
 
+
+def complete_test_for_monumental():
+    # Begin first test
+    logger.info('Begin Monumental test')
+    monumental_extractor = MonumentalExtractor()
+    test_get_news_urls(monumental_extractor)
+
+    # Test the text extraction
+    test_extract_text_from_news(monumental_extractor)
+
+    # Test for filtered by keywords
+    test_filter_news_by_keywords(monumental_extractor)
+
+def complete_test_for_cr_hoy():
+    # Begin test
+    logger.info('Begin CR Hoy test')
+    cr_hoy_extractor = CRHoyExtractor()
+    test_get_news_urls(cr_hoy_extractor)
+
 if __name__ == "__main__":
     # Configure logger: oddcrawler needsd to be the top logger
     logger = getLogger('oddcrawler')
@@ -50,16 +69,8 @@ if __name__ == "__main__":
     logger.addHandler(fh)
     logger.addHandler(ch)
 
-    # Begin first test
-    logger.info('Begin Monumental get_news_urls test')
-    monumental_extractor = monumental_extractor()
-    test_get_news_urls(monumental_extractor)
-    # print(urls)
+    # complete_test_for_monumental()
+    complete_test_for_cr_hoy()
 
-    # Test the text extraction
-    test_extract_text_from_news(monumental_extractor)
-
-    # Test for filtered by keywords
-    test_filter_news_by_keywords(monumental_extractor)
 
     # Test for other extractors might go here
