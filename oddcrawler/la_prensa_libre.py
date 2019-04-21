@@ -4,54 +4,47 @@ from selenium.common.exceptions import TimeoutException
 from oddcrawler.webpage_extractors import WebpageExtractor
 
 
-class CRHoyExtractor(WebpageExtractor):
-    NAME = 'cr_hoy'
+class LaPrensaLibreExtractor(WebpageExtractor):
+    NAME = 'la_prensa_libre'
     URL_SECTION_TIMEOUT = 1
     PARAGRAPH_TIMEOUT = 1
 
     def __init__(self):
+        # Logger needs to be defined before the super constructor is called
         self._logger = getLogger(
-            'oddcrawler.webpage_extractors.CRHoyExtractor')
-        super(CRHoyExtractor, self).__init__()
+            'oddcrawler.webpage_extractors.LaPrensaLibreExtractor')
+        super(LaPrensaLibreExtractor, self).__init__()
 
-        self._main_url = 'https://www.crhoy.com/site/dist/ultimas.php'
-        self._urls_section_xpath =\
-            '/html/body/section/div[1]/div/div/div/div[3]'
-        self._urls_xpath =\
-            '/html/body/section/div[1]/div/div/div/div[3]/div[{number}]/a'
+        # Now define this subclass variables properly
+        self._main_url =\
+            'http://www.laprensalibre.cr/Noticias/index/{year}-{month}-{day}/'
+        self._urls_section_xpath = '/html/body/div[2]/div'
+        self._urls_xpath = '/html/body/div[2]/div/a[{number}]'
 
     def get_news_urls(self, datetime_date):
+        """Get the urls from the start date."""
+
+        self._get_day_month_year_from_datetime(datetime_date)
         self.news_urls = []
 
-        self._driver.get(self._main_url)
-
-        date_form = [input for input in
-                     self._driver.find_elements_by_tag_name(
-                         'input') if input.get_attribute('id') == 'fecha']
-
-        # There should be only one input with id == 'fecha'
-        assert len(date_form) == 1
-
-        # Get the news from asked date
-        self._get_day_month_year_from_datetime(datetime_date)
-
-        self._logger.info('Fetch urls from date {day}/{month}/{year}'.format(
-            day=self._day,
-            month=self._month,
-            year=self._year))
-
-        # Fill the date form with correct information
-        date_form = date_form.pop()
-        date_form.clear()
-        date_form.send_keys('{year}-{month}-{day}'.format(year=self._year,
-                                                          month=self._month,
-                                                          day=self._day))
-        # Wait until page loads
         try:
+            self._logger.info(
+                'Fetch urls from date {day}/{month}/{year}'.format(
+                    day=self._day,
+                    month=self._month,
+                    year=self._year))
+            self._entry_url = self._main_url.format(year=self._year,
+                                                    month=self._month,
+                                                    day=self._day)
+            self._logger.info('Entry point: {entry_url}'.format(
+                entry_url=self._entry_url))
+            self._driver.get(self._entry_url)
+            self._logger.info('Wait until articles are formed, by xpath')
             self._wait_until_page_loads(self._urls_section_xpath)
-            self._logger.info('Page loaded succesfully')
         except TimeoutException:
-            self._logger.error('Page never fully loaded')
+            self._logger.info('Page not found. Time out')
+
+        self._logger.info('Page loaded succesfully')
 
         # Try to grab next news, by xpath. If timeout exists, assume
         # it is because that's the end.
@@ -82,17 +75,14 @@ class CRHoyExtractor(WebpageExtractor):
         return self.news_urls
 
     def extract_text_from_news(self):
-
         self._complete_news_info = {}
+        self._paragraph_xpath = '/html/body/div[1]/section/p[{number}]'
 
-        self._paragraph_xpath = ('/html/body/div[1]/div[2]/section/div[3]/'
-                                 'article[1]/div[3]/p[{number}]')
-
-        for each_new_url in self.news_urls:
+        for each_news_url in self.news_urls:
             self._logger.info(
-                'Extract data from {url}'.format(url=each_new_url))
+                'Extract data from {url}'.format(url=each_news_url))
 
-            self._driver.get(each_new_url)
+            self._driver.get(each_news_url)
             exception_thrown = False
             paragraph_index = 1
             paragraphs = []
@@ -112,22 +102,13 @@ class CRHoyExtractor(WebpageExtractor):
                 except TimeoutException:
                     exception_thrown = True
 
-            self._complete_news_info[each_new_url] = ' '.join(paragraphs)
-
-        # Just in case we are running with set on force urls
-        # Define day, month and year, with the date defined at build time
-        # in __init__.
-        super(
-            CRHoyExtractor,
-            self
-        )._get_day_month_year_from_datetime(self._datetime_date)
+            self._complete_news_info[each_news_url] = ' '.join(paragraphs)
 
         # Write self._complete_news_info to a file, with current date.
-        with open('complete_news_of_{name}_from_{day}_{month}_{year}.json'
-                  ''.format(name=self.NAME,
-                            day=self._day,
-                            month=self._month,
-                            year=self._year), 'w') as f:
+        with open('complete_news_of_la_prensa_libre_from_{day}_{month}_{year}'
+                  '.json'.format(day=self._day,
+                                 month=self._month,
+                                 year=self._year), 'w') as f:
             f.write(dumps(self._complete_news_info))
             f.close()
 

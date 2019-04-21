@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 from datetime import date
-from oddcrawler import MonumentalExtractor, CRHoyExtractor
+from oddcrawler import (MonumentalExtractor, CRHoyExtractor,
+                        LaPrensaLibreExtractor)
 from logging import (getLogger, FileHandler, StreamHandler, Formatter, DEBUG,
                      ERROR)
 
@@ -31,7 +32,7 @@ def test_extract_text_from_news(webpage_extractor):
 
 def test_filter_news_by_keywords(webpage_extractor):
     filtered_news = webpage_extractor.filter_news_by_keywords(
-        ['registro', 'colones', 'Gobierno'])
+        ['accidente', 'moto', 'choque', 'amputado'])
 
 def complete_test_for_monumental():
     # Begin first test
@@ -45,8 +46,9 @@ def complete_test_for_monumental():
     # Test for filtered by keywords
     test_filter_news_by_keywords(monumental_extractor)
 
+    del monumental_extractor
+
 def complete_test_for_cr_hoy():
-    # Begin test
     logger.info('Begin CR Hoy test')
     cr_hoy_extractor = CRHoyExtractor()
     test_get_news_urls(cr_hoy_extractor)
@@ -56,6 +58,20 @@ def complete_test_for_cr_hoy():
 
     # Test filtering
     test_filter_news_by_keywords(cr_hoy_extractor)
+
+    del cr_hoy_extractor
+
+def complete_test_for_la_prensa_libre():
+    # Begin test
+    logger.info('Begin La República test')
+    la_prensa_libre = LaPrensaLibreExtractor()
+    test_get_news_urls(la_prensa_libre)
+
+    # Test the text extraction
+    test_extract_text_from_news(la_prensa_libre)
+
+    # Test filtering
+    test_filter_news_by_keywords(la_prensa_libre)
 
 if __name__ == "__main__":
     # Configure logger: oddcrawler needsd to be the top logger
@@ -74,8 +90,6 @@ if __name__ == "__main__":
     logger.addHandler(fh)
     logger.addHandler(ch)
 
-    # complete_test_for_monumental()
+    complete_test_for_monumental()
     complete_test_for_cr_hoy()
-
-
-    # Test for other extractors might go here
+    complete_test_for_la_prensa_libre()
