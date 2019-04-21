@@ -105,10 +105,12 @@ class LaPrensaLibreExtractor(WebpageExtractor):
             self._complete_news_info[each_news_url] = ' '.join(paragraphs)
 
         # Write self._complete_news_info to a file, with current date.
-        with open('complete_news_of_la_prensa_libre_from_{day}_{month}_{year}'
-                  '.json'.format(day=self._day,
-                                 month=self._month,
-                                 year=self._year), 'w') as f:
+        with open('complete_news_of_{name}_from_{day}_{month}_{year}'
+                  '.json'.format(
+                      name=self.NAME,
+                      day=self._day,
+                      month=self._month,
+                      year=self._year), 'w') as f:
             f.write(dumps(self._complete_news_info))
             f.close()
 

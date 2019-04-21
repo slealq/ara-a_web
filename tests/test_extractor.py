@@ -83,6 +83,12 @@ def complete_test_for_la_republica():
 
     test_get_news_urls(la_republica)
 
+    # Test text extraction
+    test_extract_text_from_news(la_republica)
+
+    # Test filtering
+    test_filter_news_by_keywords(la_republica)
+
     del la_republica
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 from logging import getLogger
+from json import dumps
 from selenium.common.exceptions import TimeoutException
 from oddcrawler.webpage_extractors import WebpageExtractor
 
@@ -7,6 +8,7 @@ class LaRepublicaExtractor(WebpageExtractor):
     NAME = 'la_republica'
     URL_SECTION_TIMEOUT = 1
     NEWS_SECTION_TIMEOUT = 2
+    PARAGRAPH_TIMEOUT = 1
 
     def __init__(self):
         self._logger = getLogger(
@@ -56,6 +58,10 @@ class LaRepublicaExtractor(WebpageExtractor):
             day=self._day,
             month_name=self._month_name,
             year=self._year)
+
+        self._logger.info(
+            'Trying to find {expected_date} in article text'.format(
+                **locals()))
 
         while True:
             # Iterate over each page
@@ -120,7 +126,41 @@ class LaRepublicaExtractor(WebpageExtractor):
         return self.news_urls
 
     def extract_text_from_news(self):
-        pass
+        self._complete_news_info = {}
+        self._article_section_xpath =\
+            '/html/body/div/div/div[2]/div/section/div/div[1]/article'
+
+        for each_news_url in self.news_urls:
+            self._logger.info('Extract data from {each_news_url}'.format(
+                **locals()))
+
+            self._driver.get(each_news_url)
+
+            try:
+                self._wait_until_page_loads(
+                    self._article_section_xpath,
+                    self.PARAGRAPH_TIMEOUT
+                )
+
+            except TimeoutException:
+                self._logger.info('Failed to load {url}'.format(each_news_url))
+                continue
+
+            self._complete_news_info[each_news_url] =\
+                self._driver.find_element_by_xpath(
+                    self._article_section_xpath).text
+
+        # Write self._complete_news_info to a file, with current date.
+        with open('complete_news_of_{name}_from_{day}_{month}_{year}'
+                  '.json'.format(
+                      name=self.NAME,
+                      day=self._day,
+                      month=self._month,
+                      year=self._year), 'w') as f:
+            f.write(dumps(self._complete_news_info))
+            f.close()
+
+        return self._complete_news_info
 
     def __del__(self):
         self._logger.info('Closing browser.')
