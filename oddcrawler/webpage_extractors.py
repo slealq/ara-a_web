@@ -16,6 +16,26 @@ _logger = getLogger('oddcrawler.webpage_extractors')
 
 class WebpageExtractor(ABC):
     LOAD_TIMEOUT = 10
+    _WEEKDAY_TRADUCTION = {0: 'Lunes',
+                            1: 'Martes',
+                            2: 'Miércoles',
+                            3: 'Jueves',
+                            4: 'Viernes',
+                            5: 'Sábado',
+                            6: 'Domingo'}
+
+    _MONTH_NUMBER_TRADUCTION = {1: 'enero',
+                                2: 'febrero',
+                                3: 'marzo',
+                                4: 'abril',
+                                5: 'mayo',
+                                6: 'junio',
+                                7: 'julio',
+                                8: 'agosto',
+                                9: 'septiembre',
+                                10: 'octubre',
+                                11: 'noviembre',
+                                12: 'diciembre'}
 
     def __init__(self):
         self._main_url = None
@@ -28,6 +48,9 @@ class WebpageExtractor(ABC):
         self._year = datetime_date.year
         self._month = datetime_date.month
         self._day = datetime_date.day
+        self._weekday = datetime_date.weekday()
+        self._weekday_name = self._WEEKDAY_TRADUCTION[self._weekday]
+        self._month_name = self._MONTH_NUMBER_TRADUCTION[self._month]
 
     def _wait_until_page_loads(self, xpath, timeout=None):
         """Wait unitl LOAD_TIMEOUT seconds has passed, to confirm there's

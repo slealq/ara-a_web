@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
-from datetime import date
+from datetime import date, datetime
 from oddcrawler import (MonumentalExtractor, CRHoyExtractor,
-                        LaPrensaLibreExtractor)
+                        LaPrensaLibreExtractor, LaRepublicaExtractor)
 from logging import (getLogger, FileHandler, StreamHandler, Formatter, DEBUG,
                      ERROR)
 
 
 def test_get_news_urls(webpage_extractor):
-    urls = webpage_extractor.get_news_urls(date.today())
+    # urls = webpage_extractor.get_news_urls(date.today())
+    urls = webpage_extractor.get_news_urls(datetime(2019, 4, 17))
     assert isinstance(urls, list)
 
     return urls
@@ -63,7 +64,7 @@ def complete_test_for_cr_hoy():
 
 def complete_test_for_la_prensa_libre():
     # Begin test
-    logger.info('Begin La República test')
+    logger.info('Begin La Prensa Libre test')
     la_prensa_libre = LaPrensaLibreExtractor()
     test_get_news_urls(la_prensa_libre)
 
@@ -72,6 +73,17 @@ def complete_test_for_la_prensa_libre():
 
     # Test filtering
     test_filter_news_by_keywords(la_prensa_libre)
+
+    del la_prensa_libre
+
+def complete_test_for_la_republica():
+    # Begin test
+    logger.info('Begin La Repúlica test')
+    la_republica = LaRepublicaExtractor()
+
+    test_get_news_urls(la_republica)
+
+    del la_republica
 
 if __name__ == "__main__":
     # Configure logger: oddcrawler needsd to be the top logger
@@ -90,6 +102,7 @@ if __name__ == "__main__":
     logger.addHandler(fh)
     logger.addHandler(ch)
 
+    complete_test_for_la_republica()
     complete_test_for_monumental()
     complete_test_for_cr_hoy()
     complete_test_for_la_prensa_libre()
