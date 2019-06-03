@@ -10,3 +10,6 @@
 
 # log files
 *.log
+
+# result output
+*.json
