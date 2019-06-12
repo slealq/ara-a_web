@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from argparse import ArgumentParser
-from oddcrawler import NewsFilter, ExtractorJob
+from oddcrawler import NewsFilter, JobMetadata, ExtractorJob
 from oddcrawler import(LaRepublicaExtractor, CRHoyExtractor,
                        MonumentalExtractor, LaPrensaLibreExtractor)
 from oddcrawler import Database
@@ -21,7 +21,7 @@ def process_add(parser_ns):
     assert parser_ns.filter, "No valid filter for job specified."
 
     new_filter = NewsFilter(parser_ns.filter)
-    new_job = ExtractorJob(EXTRACTOR_MAP[parser_ns.source],
+    new_job = JobMetadata(EXTRACTOR_MAP[parser_ns.source],
                            PERIODICITY_MAP[parser_ns.periodicity],
                            new_filter)
     my_db = Database()
@@ -35,12 +35,31 @@ def process_show():
     print(my_db)
 
 def process_remove(parser_ns):
-    assert parser_ns.job_id, "Didn't provide a valid id to remove."
+    assert isinstance(parser_ns.job_id, int), (
+        "Didn't provide a valid id to remove.")
 
     my_db = Database()
     my_db.read_from_db(DATABASE_PATH)
     my_db.remove_job(parser_ns.job_id)
     my_db.write_local_db_to(DATABASE_PATH)
+
+    print("Removed succesfully")
+
+def start_jobs():
+    METADATA_POS = 1
+    my_db = Database()
+    my_db.read_from_db(DATABASE_PATH)
+
+    for each_entry in my_db:
+        # create new job object
+        target_metadata = each_entry[METADATA_POS]
+        job = ExtractorJob(
+            periodicity=target_metadata.periodicity_in_seconds,
+            text_filter=target_metadata.words_filter,
+            source=target_metadata.target_extractor
+        )
+        job.test_function()
+        job.run()
 
 def create_parser_arguments():
     """Create bash interface."""
@@ -70,8 +89,13 @@ def create_parser_arguments():
         'Remove a job from the db using it\'s index'))
     remove_job.add_argument('-r', '--remove', help=('Remove job using id.'),
                             action='store_true')
-    remove_job.add_argument('-i', '--job_id', type=int, help=('The job id of '
-    'the job to remove.'))
+    remove_job.add_argument('-i', '--job_id', type=int, help=(
+        'The job id of the job to remove.'))
+
+    start_jobs = parser.add_argument_group('Start all jobs of database')
+    start_jobs.add_argument('--start', action='store_true', help=(
+        'Start the daemon, running with the periodicity given, every day '
+        'for the day before.'))
 
     return parser
 
@@ -79,11 +103,16 @@ if __name__ == "__main__":
     parser = create_parser_arguments()
     parser_ns = parser.parse_args()
 
+    print(parser_ns)
+
     if (parser_ns.add):
         process_add(parser_ns)
     elif (parser_ns.show):
         process_show()
     elif (parser_ns.remove):
         process_remove(parser_ns)
+    elif (parser_ns.start):
+        print("Start jobs")
+        start_jobs()
     else:
         pass

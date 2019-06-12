@@ -1,7 +1,7 @@
 """Manage the jobs database, which contains what the daemon should
 execute, and when."""
 
-from oddcrawler import ExtractorJob
+from oddcrawler import JobMetadata
 from pickle import dump, load, HIGHEST_PROTOCOL
 from json import dumps
 
@@ -20,10 +20,10 @@ class Database():
             self._db = {}
             return self._db
 
-    def add_job(self, data: ExtractorJob):
+    def add_job(self, data: JobMetadata):
         """Support only single job writes to the database."""
 
-        assert isinstance(data, ExtractorJob), "data should be a ExtractorJob"
+        assert isinstance(data, JobMetadata), "data should be a JobMetadata"
         # Use the amount of jobs in db as index
         self._db[len(self._db)] = data
 
@@ -39,6 +39,9 @@ class Database():
 
         with open(path_to_target, 'wb') as db_file:
             dump(self._db, db_file, HIGHEST_PROTOCOL)
+
+    def __iter__(self):
+        yield from self._db.items()
 
     def __repr__(self):
         formatted_db = {key: repr(value) for key, value in self._db.items()}

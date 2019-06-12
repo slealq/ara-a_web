@@ -6,7 +6,7 @@ class NewsFilter:
     class_filter: str
 
 @dataclass(eq=True, frozen=True)
-class ExtractorJob:
+class JobMetadata:
     # The class, not an instance
     target_extractor: WebpageExtractor
     periodicity_in_seconds: int

@@ -3,6 +3,7 @@ from datetime import timedelta, datetime
 from logging import (getLogger, FileHandler, StreamHandler, Formatter, DEBUG,
                      ERROR)
 
+
 class ExtractorJob():
 
     def __init__(self, periodicity, text_filter, source):
@@ -10,6 +11,7 @@ class ExtractorJob():
         self.source = source
         self.text_filter = [text_filter]
         self.t1 = Timeloop()
+        self.setup_logger()
 
     def test_function(self):
         self.logger.info('Begin {source_name} test'.format(
@@ -49,6 +51,5 @@ class ExtractorJob():
         self.logger.addHandler(ch)
 
     def run(self):
-        self.setup_logger()
         self.t1._add_job(self.target_function, interval=self.periodicity)
         self.t1.start(block=True)
