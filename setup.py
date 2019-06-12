@@ -21,5 +21,5 @@ setup(
     url='https://github.com/slealq/oddcrawler',
     license=license,
     packages=find_packages('oddcrawler'),
-    install_requires=['selenium', 'xvfbwrapper']
+    install_requires=['selenium', 'xvfbwrapper', 'dataclasses']
 )
