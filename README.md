@@ -101,8 +101,11 @@ files will be inmediately available to the users of the package, as specified in
 [python-packaging](https://python-packaging.readthedocs.io/en/latest/minimal.html).
 
 ```sh
-$ pip install -e .
+$ pip3 install -e .
 ```
+
+NOTE: The above command might fail due to `pip3` not being installed on your PC. If this is 
+case, download `python-pip` via your distribution package manager.
 
 Now you can import `oddwebcrawler` in any python inside this environment.
 
