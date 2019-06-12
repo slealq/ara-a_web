@@ -11,7 +11,7 @@ DATABASE_PATH = 'database.pkl'
 EXTRACTOR_MAP = {'la_republica': LaRepublicaExtractor,
                  'cr_hoy': CRHoyExtractor,
                  'monumental': MonumentalExtractor,
-                 'la_prensa_libra': LaPrensaLibreExtractor}
+                 'la_prensa_libre': LaPrensaLibreExtractor}
 
 PERIODICITY_MAP = {'each_day': 86400}
 
