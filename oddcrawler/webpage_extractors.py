@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """There are four main news source implemented for now: Monumental, La Prensa
  Libre, La Extra y CR Hoy."""
 
